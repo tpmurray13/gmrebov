@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive BOV: 222 Maiden Ln, Fayetteville, NC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (bg-stone-100, text-gray-800, accent bg-sky-700) -->
+    <!-- Application Structure Plan: A single-page dashboard with sticky navigation to jump between thematic sections (Summary, Valuation, Market, Comps, Recommendations). This non-linear structure allows users to quickly access the information most relevant to them. Key interactions include dynamic charts for valuation and demographics, a sortable comps table, and a property highlights tab to showcase its premium features. -->
+    <!-- Visualization & Content Choices: Valuation -> Compare -> Horizontal Bar Chart (Chart.js) to clearly show value ranges. Demographics -> Inform -> Doughnut Chart (Chart.js) with dropdown. Comps -> Compare/Organize -> Sortable HTML Table + Bar Chart (Chart.js) for detailed and visual comparison. Recommendations -> Inform -> Tabbed interface with a 'Highlights' section listing key value-add features. All choices prioritize clarity and user interaction. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link.active {
+            color: #0369a1; /* sky-700 */
+            border-bottom-color: #0369a1;
+        }
+        .tab.active {
+            background-color: #0369a1; /* sky-700 */
+            color: white;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-900">Broker's Opinion of Value</h1>
+                    <p class="text-sm text-gray-500">222 Maiden Ln, Fayetteville, NC 28301</p>
+                </div>
+            </div>
+            <nav id="main-nav">
+                <ul class="flex border-b border-gray-200">
+                    <li><a href="#summary" class="nav-link text-sm font-medium text-gray-500 hover:text-gray-700 py-3 px-3 sm:px-4 inline-block border-b-2 border-transparent">Summary</a></li>
+                    <li><a href="#valuation" class="nav-link text-sm font-medium text-gray-500 hover:text-gray-700 py-3 px-3 sm:px-4 inline-block border-b-2 border-transparent">Valuation</a></li>
+                    <li><a href="#market" class="nav-link text-sm font-medium text-gray-500 hover:text-gray-700 py-3 px-3 sm:px-4 inline-block border-b-2 border-transparent">Market</a></li>
+                    <li><a href="#comps" class="nav-link text-sm font-medium text-gray-500 hover:text-gray-700 py-3 px-3 sm:px-4 inline-block border-b-2 border-transparent">Comparables</a></li>
+                    <li><a href="#recommendations" class="nav-link text-sm font-medium text-gray-500 hover:text-gray-700 py-3 px-3 sm:px-4 inline-block border-b-2 border-transparent">Recommendations</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <section id="summary" class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold mb-4">Property Summary</h2>
+            <p class="mb-6 text-gray-600 max-w-3xl">This section provides an overview of the subject property's key physical and financial characteristics. It includes essential details like size, age, and tax assessment, forming the foundation for the valuation analysis.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-sm font-medium text-gray-500">Building Size</h3>
+                    <p class="mt-1 text-3xl font-semibold text-sky-700">6,787 <span class="text-xl">SF</span></p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-sm font-medium text-gray-500">Lot Size</h3>
+                    <p class="mt-1 text-3xl font-semibold text-sky-700">0.89 <span class="text-xl">Acres</span></p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-sm font-medium text-gray-500">Year Built</h3>
+                    <p class="mt-1 text-3xl font-semibold text-sky-700">1966</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-sm font-medium text-gray-500">Parking Ratio</h3>
+                    <p class="mt-1 text-3xl font-semibold text-sky-700">3.54<span class="text-base">/1,000 SF</span></p>
+                </div>
+            </div>
+            <div class="mt-6 bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-2">2024 Tax Assessment</h3>
+                <div class="flex flex-wrap justify-between">
+                    <p><strong>Land Value:</strong> $69,618</p>
+                    <p><strong>Building Value:</strong> $404,328</p>
+                    <p><strong>Total Value:</strong> <span class="font-bold text-sky-700">$473,946</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="valuation" class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold mb-4">Valuation Analysis</h2>
+             <p class="mb-6 text-gray-600 max-w-3xl">The core of the report, this section presents the estimated market value of the property across three scenarios. The valuation has been significantly increased to reflect recent full-building renovations and premium amenities.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="chart-container">
+                        <canvas id="valuationChart"></canvas>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div id="val-low" class="valuation-card bg-white p-4 rounded-lg shadow cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 border-l-4 border-red-500">
+                        <h3 class="font-bold text-red-600">Low Estimate</h3>
+                        <p class="text-2xl font-semibold">$1,020,000</p>
+                        <p class="text-gray-500">$150.29 / SF</p>
+                    </div>
+                    <div id="val-likely" class="valuation-card bg-white p-4 rounded-lg shadow cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 border-l-4 border-sky-600">
+                        <h3 class="font-bold text-sky-700">Likely Estimate</h3>
+                        <p class="text-2xl font-semibold">$1,120,000</p>
+                        <p class="text-gray-500">$165.02 / SF</p>
+                    </div>
+                    <div id="val-high" class="valuation-card bg-white p-4 rounded-lg shadow cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 border-l-4 border-green-500">
+                        <h3 class="font-bold text-green-600">High Estimate</h3>
+                        <p class="text-2xl font-semibold">$1,190,000</p>
+                        <p class="text-gray-500">$175.34 / SF</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="market" class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold mb-4">Market Context</h2>
+            <p class="mb-6 text-gray-600 max-w-3xl">No property exists in a vacuum. This section provides key data on the local Downtown Fayetteville office market and surrounding demographics to contextualize the property's value and potential.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-4">Downtown Office Market Snapshot</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-medium">Vacancy Rate (1-3 Star)</p>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-sky-600 h-2.5 rounded-full" style="width: 2.2%"></div>
+                            </div>
+                            <p class="text-right text-sm font-bold">2.2%</p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Avg. Market Rent ($/SF)</p>
+                            <p class="text-2xl font-bold text-sky-700">$20.27 <span class="text-sm text-green-600 font-medium">(+2.2% YoY)</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">Area Demographics</h3>
+                        <select id="demographics-selector" class="border border-gray-300 rounded-md p-1 text-sm">
+                            <option value="population">Population</option>
+                            <option value="households">Households</option>
+                            <option value="income">Avg. HH Income</option>
+                        </select>
+                    </div>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="demographicsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comps" class="mb-12 scroll-mt-24">
+            <h2 class="text-2xl font-bold mb-4">Comparable Sales Analysis</h2>
+            <p class="mb-6 text-gray-600 max-w-3xl">This section details recently sold properties that are similar to the subject. Use the interactive table to sort the data and see how 222 Maiden Ln compares on a price-per-square-foot basis in the chart.</p>
+            <div class="grid grid-cols-1 xl:grid-cols-5 gap-8">
+                <div class="xl:col-span-3 bg-white p-6 rounded-lg shadow overflow-x-auto">
+                    <table class="w-full text-sm text-left" id="compsTable">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 cursor-pointer" data-sort="address">Address</th>
+                                <th scope="col" class="px-4 py-3 cursor-pointer" data-sort="price">Sale Price</th>
+                                <th scope="col" class="px-4 py-3 cursor-pointer" data-sort="price_sf">$/SF</th>
+                                <th scope="col" class="px-4 py-3 cursor-pointer" data-sort="date">Sale Date</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="xl:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-4 text-center">Price/SF Comparison</h3>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="compsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="recommendations" class="scroll-mt-24">
+            <h2 class="text-2xl font-bold mb-4">Strategic Recommendations</h2>
+            <p class="mb-6 text-gray-600 max-w-3xl">Based on the analysis, this section outlines actionable next steps to maximize the property's value, covering marketing, key highlights, and pricing strategy.</p>
+            <div class="bg-white rounded-lg shadow">
+                <div class="border-b border-gray-200">
+                    <div id="tabs" class="flex flex-wrap -mb-px">
+                        <button class="tab inline-block p-4 border-b-2 border-transparent rounded-t-lg font-medium active" data-tab="marketing">Marketing</button>
+                        <button class="tab inline-block p-4 border-b-2 border-transparent rounded-t-lg font-medium" data-tab="highlights">Highlights</button>
+                        <button class="tab inline-block p-4 border-b-2 border-transparent rounded-t-lg font-medium" data-tab="pricing">Pricing</button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div id="marketing" class="tab-content">
+                        <h3 class="font-semibold text-lg mb-2">Target Audience</h3>
+                        <p class="mb-4">Ideal for a premium owner-user (e.g., law firm, professional services, corporate office) seeking a turnkey, high-profile downtown location.</p>
+                        <h3 class="font-semibold text-lg mb-2">Marketing Channels</h3>
+                        <p class="mb-4">Feature on major commercial real estate platforms (CoStar, LoopNet), targeted email campaigns to the regional brokerage community, and direct outreach to large local employers and professional firms. Professional photography and a virtual tour are highly recommended to showcase the renovations.</p>
+                        <h3 class="font-semibold text-lg mb-2">Key Selling Points</h3>
+                        <p>Emphasize the complete modern renovation, rare on-site parking, large private greenspace, and prime walkable location near Segra Stadium and other downtown amenities.</p>
+                    </div>
+                    <div id="highlights" class="tab-content hidden">
+                        <h3 class="font-semibold text-lg mb-2">Premium Property Features</h3>
+                        <p class="mb-4">This property stands out from the competition due to a combination of recent upgrades and unique location-based amenities:</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Fully Renovated Interior:</strong> Modern look and feel throughout the entire building.</li>
+                            <li><strong>New LED Lighting:</strong> Bright, energy-efficient lighting installed.</li>
+                            <li><strong>Upgraded Landscaping:</strong> Enhanced curb appeal with professional landscaping.</li>
+                            <li><strong>Rare On-site Parking:</strong> Includes an attached surface lot, a significant advantage for a downtown building.</li>
+                            <li><strong>Large Greenspace:</strong> The property sits on a large lot with beautiful, usable green space.</li>
+                            <li><strong>Prime Amenity Access:</strong> Walking distance to the highly sought-after Segra Baseball Stadium.</li>
+                        </ul>
+                    </div>
+                    <div id="pricing" class="tab-content hidden">
+                        <h3 class="font-semibold text-lg mb-2">Initial Listing Price</h3>
+                        <p class="text-3xl font-bold text-sky-700 mb-4">$1,175,000</p>
+                        <h3 class="font-semibold text-lg mb-2">Negotiation Strategy</h3>
+                        <p>The pricing reflects the property's status as a premier, renovated downtown asset. Justify the value by focusing on the turn-key condition and rare combination of amenities (parking, location, greenspace) that are not available in competing properties.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-12 py-4 border-t">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
+            <p>This is a Broker’s Opinion of Value and should not be considered an appraisal. All data is for informational purposes only.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const propertyData = {
+                sf: 6787,
+                valuation: {
+                    low: { price: 1020000, price_sf: 150.29 },
+                    likely: { price: 1120000, price_sf: 165.02 },
+                    high: { price: 1190000, price_sf: 175.34 },
+                    lastSale: { price: 680000, price_sf: 100.19 }
+                },
+                demographics: {
+                    population: { labels: ['2-Mile Radius', '5-Mile Radius'], data: [36928, 91219] },
+                    households: { labels: ['2-Mile Radius', '5-Mile Radius'], data: [15520, 39717] },
+                    income: { labels: ['2-Mile Radius', '5-Mile Radius'], data: [56793, 77615] }
+                },
+                comps: [
+                    { address: '1778 Metromedical Dr', price: 325000, price_sf: 162.50, date: '2025-06-16' },
+                    { address: '1314 Raeford Rd', price: 500000, price_sf: 144.59, date: '2025-01-29' },
+                    { address: '2905 Breezewood Ave', price: 1000000, price_sf: 125.00, date: '2024-08-13' },
+                    { address: '405 Barrington Cross St', price: 351500, price_sf: 151.25, date: '2024-01-19' }
+                ]
+            };
+
+            let valuationChart, demographicsChart, compsChart;
+
+            function formatCurrency(value) {
+                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(value);
+            }
+
+            function initValuationChart() {
+                const ctx = document.getElementById('valuationChart').getContext('2d');
+                valuationChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Last Sale', 'Low', 'Likely', 'High'],
+                        datasets: [{
+                            label: 'Valuation ($)',
+                            data: [
+                                propertyData.valuation.lastSale.price,
+                                propertyData.valuation.low.price,
+                                propertyData.valuation.likely.price,
+                                propertyData.valuation.high.price
+                            ],
+                            backgroundColor: [
+                                'rgba(107, 114, 128, 0.6)', 
+                                'rgba(239, 68, 68, 0.6)', 
+                                'rgba(2, 132, 199, 0.6)',  
+                                'rgba(34, 197, 94, 0.6)'  
+                            ],
+                            borderColor: [
+                                'rgba(107, 114, 128, 1)',
+                                'rgba(239, 68, 68, 1)',
+                                'rgba(2, 132, 199, 1)',
+                                'rgba(34, 197, 94, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return formatCurrency(context.raw);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatCurrency(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function initDemographicsChart(metric = 'population') {
+                if (demographicsChart) {
+                    demographicsChart.destroy();
+                }
+                const ctx = document.getElementById('demographicsChart').getContext('2d');
+                const chartData = propertyData.demographics[metric];
+                demographicsChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: metric.charAt(0).toUpperCase() + metric.slice(1),
+                            data: chartData.data,
+                            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)'],
+                            borderColor: ['#ffffff'],
+                            borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                             tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            if (metric === 'income') {
+                                                label += formatCurrency(context.parsed);
+                                            } else {
+                                                label += new Intl.NumberFormat('en-US').format(context.parsed);
+                                            }
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function initCompsChart() {
+                const ctx = document.getElementById('compsChart').getContext('2d');
+                const labels = propertyData.comps.map(c => c.address.split(' ')[0] + ' ' + c.address.split(' ')[1]);
+                const data = propertyData.comps.map(c => c.price_sf);
+                
+                labels.unshift('Subject (Likely)');
+                data.unshift(propertyData.valuation.likely.price_sf);
+
+                compsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Price per SF ($)',
+                            data: data,
+                            backgroundColor: [
+                                'rgba(2, 132, 199, 0.8)',
+                                'rgba(107, 114, 128, 0.6)',
+                                'rgba(107, 114, 128, 0.6)',
+                                'rgba(107, 114, 128, 0.6)',
+                                'rgba(107, 114, 128, 0.6)'
+                            ],
+                            borderColor: [
+                                'rgba(2, 132, 199, 1)',
+                                'rgba(107, 114, 128, 1)',
+                                'rgba(107, 114, 128, 1)',
+                                'rgba(107, 114, 128, 1)',
+                                'rgba(107, 114, 128, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function populateCompsTable(comps) {
+                const tableBody = document.querySelector('#compsTable tbody');
+                tableBody.innerHTML = '';
+                comps.forEach(comp => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b hover:bg-gray-50';
+                    row.innerHTML = `
+                        <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">${comp.address}</td>
+                        <td class="px-4 py-3">${formatCurrency(comp.price)}</td>
+                        <td class="px-4 py-3">${formatCurrency(comp.price_sf)}</td>
+                        <td class="px-4 py-3">${new Date(comp.date).toLocaleDateString()}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            let sortDirection = {};
+            document.querySelectorAll('#compsTable th').forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortKey = header.dataset.sort;
+                    const direction = (sortDirection[sortKey] || 'asc') === 'asc' ? 'desc' : 'asc';
+                    sortDirection = { [sortKey]: direction };
+
+                    const sortedComps = [...propertyData.comps].sort((a, b) => {
+                        let valA = a[sortKey];
+                        let valB = b[sortKey];
+                        if (sortKey === 'date') {
+                            valA = new Date(valA);
+                            valB = new Date(valB);
+                        }
+                        if (valA < valB) return direction === 'asc' ? -1 : 1;
+                        if (valA > valB) return direction === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+                    populateCompsTable(sortedComps);
+                });
+            });
+
+            document.getElementById('demographics-selector').addEventListener('change', (e) => {
+                initDemographicsChart(e.target.value);
+            });
+
+            document.querySelectorAll('.valuation-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const id = e.currentTarget.id;
+                    const indexMap = { 'val-low': 1, 'val-likely': 2, 'val-high': 3 };
+                    const index = indexMap[id];
+                    
+                    if (valuationChart && index !== undefined) {
+                        valuationChart.data.datasets.forEach(dataset => {
+                           dataset.backgroundColor = dataset.backgroundColor.map((color, i) => i === index ? color.replace('0.6', '1') : color.replace('1)', '0.6)'));
+                        });
+                        valuationChart.update();
+                    }
+                });
+            });
+            
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const target = tab.dataset.tab;
+                    tabContents.forEach(content => {
+                        if (content.id === target) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            const navLinks = document.querySelectorAll('#main-nav a');
+            const sections = document.querySelectorAll('main section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+            sections.forEach(section => observer.observe(section));
+
+            initValuationChart();
+            initDemographicsChart();
+            initCompsChart();
+            populateCompsTable(propertyData.comps);
+        });
+    </script>
+
+</body>
+</html>
